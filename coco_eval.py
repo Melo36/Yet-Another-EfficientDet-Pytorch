@@ -119,7 +119,8 @@ def evaluate_coco_script(project_name='coco', compound_coef=0, weights_path=None
         coco_eval.params.imgIds = image_ids
         coco_eval.evaluate()
         coco_eval.accumulate()
-        stats = coco_eval.summarize()
+        coco_eval.summarize()
+        stats = coco_eval.stats
         print(f'mAP0.5:0.95 {stats[0]}')
         data = [epoch, stats[0]]
         write_to_csv('mAP.csv', data)
