@@ -106,8 +106,7 @@ def evaluate_coco_script(project_name='coco', compound_coef=0, weights_path=None
     def write_to_csv(filename, data):
         with open(filename, 'w', newline='') as csvfile:
             csv_writer = csv.writer(csvfile)
-            for row in data:
-                csv_writer.writerow(row)
+            csv_writer.writerow(data)
 
     def _eval(coco_gt, image_ids, pred_json_path):
         # load results in COCO evaluation tool
