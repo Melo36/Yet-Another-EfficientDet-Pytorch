@@ -21,6 +21,7 @@ from efficientdet.dataset import CocoDataset, Resizer, Normalizer, Augmenter, co
 from efficientdet.loss import FocalLoss
 from utils.sync_batchnorm import patch_replication_callback
 from utils.utils import replace_w_sync_bn, CustomDataParallel, get_last_weights, init_weights, boolean_string
+from coco_eval import evaluate_coco_script
 
 
 class Params:
@@ -202,6 +203,9 @@ def train(opt):
 
     try:
         for epoch in range(opt.num_epochs):
+            if epoch != 0:
+                last_weight = get_last_weights(opt.saved_path)
+                evaluate_coco_script(params.project_name, weights_path=last_weight, epoch=epoch)
             last_epoch = step // num_iter_per_epoch
             if epoch < last_epoch:
                 continue
