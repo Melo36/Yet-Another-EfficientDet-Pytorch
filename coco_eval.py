@@ -104,7 +104,8 @@ def evaluate_coco_script(project_name='coco', compound_coef=0, weights_path=None
         json.dump(results, open(filepath, 'w'), indent=4)
 
     def write_to_csv(filename, data):
-        with open(filename, 'w', newline='') as csvfile:
+        mode = 'a' if os.path.exists(filename) else 'w'
+        with open(filename, mode, newline='') as csvfile:
             csv_writer = csv.writer(csvfile)
             csv_writer.writerow(data)
 
