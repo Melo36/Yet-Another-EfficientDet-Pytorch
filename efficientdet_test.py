@@ -31,16 +31,7 @@ use_float16 = False
 cudnn.fastest = True
 cudnn.benchmark = True
 
-obj_list = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light',
-            'fire hydrant', '', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep',
-            'cow', 'elephant', 'bear', 'zebra', 'giraffe', '', 'backpack', 'umbrella', '', '', 'handbag', 'tie',
-            'suitcase', 'frisbee', 'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove',
-            'skateboard', 'surfboard', 'tennis racket', 'bottle', '', 'wine glass', 'cup', 'fork', 'knife', 'spoon',
-            'bowl', 'banana', 'apple', 'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut',
-            'cake', 'chair', 'couch', 'potted plant', 'bed', '', 'dining table', '', '', 'toilet', '', 'tv',
-            'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave', 'oven', 'toaster', 'sink',
-            'refrigerator', '', 'book', 'clock', 'vase', 'scissors', 'teddy bear', 'hair drier',
-            'toothbrush']
+obj_list = ['ferrero_klassik', 'leibniz_butter', 'leibniz_kakao', 'lindt_lindor', 'milka_vollmilch']
 
 
 color_list = standard_to_bgr(STANDARD_COLORS)
@@ -78,7 +69,7 @@ with torch.no_grad():
                       regressBoxes, clipBoxes,
                       threshold, iou_threshold)
 
-def display(preds, imgs, imshow=True, imwrite=False):
+def display(preds, imgs, imshow=True, imwrite=True):
     for i in range(len(imgs)):
         if len(preds[i]['rois']) == 0:
             continue
@@ -86,7 +77,7 @@ def display(preds, imgs, imshow=True, imwrite=False):
         imgs[i] = imgs[i].copy()
 
         for j in range(len(preds[i]['rois'])):
-            x1, y1, x2, y2 = preds[i]['rois'][j].astype(np.int)
+            x1, y1, x2, y2 = preds[i]['rois'][j].astype(int)
             obj = obj_list[preds[i]['class_ids'][j]]
             score = float(preds[i]['scores'][j])
             plot_one_box(imgs[i], [x1, y1, x2, y2], label=obj,score=score,color=color_list[get_index_label(obj, obj_list)])
@@ -106,9 +97,9 @@ display(out, ori_imgs, imshow=False, imwrite=True)
 print('running speed test...')
 with torch.no_grad():
     print('test1: model inferring and postprocessing')
-    print('inferring image for 10 times...')
+    print('inferring image for 1 times...')
     t1 = time.time()
-    for _ in range(10):
+    for _ in range(1):
         _, regression, classification, anchors = model(x)
 
         out = postprocess(x,
@@ -119,7 +110,7 @@ with torch.no_grad():
 
     t2 = time.time()
     tact_time = (t2 - t1) / 10
-    print(f'{tact_time} seconds, {1 / tact_time} FPS, @batch_size 1')
+    print(f'{tact_time * 1000} ms, {1 / tact_time} FPS, @batch_size 1')
 
     # uncomment this if you want a extreme fps test
     # print('test2: model inferring only')
